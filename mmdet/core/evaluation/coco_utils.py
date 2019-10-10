@@ -42,6 +42,7 @@ def coco_eval(result_files, result_types, coco, max_dets=(100, 300, 1000)):
         cocoEval.evaluate()
         cocoEval.accumulate()
         cocoEval.summarize()
+        return cocoEval.stats[0]
 
 
 def fast_eval_recall(results,
