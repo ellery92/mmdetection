@@ -40,13 +40,15 @@ class CustomDataset(Dataset):
                  img_prefix=None,
                  seg_prefix=None,
                  proposal_file=None,
-                 test_mode=False):
+                 test_mode=False,
+                 min_size=17):
         self.ann_file = ann_file
         self.data_root = data_root
         self.img_prefix = img_prefix
         self.seg_prefix = seg_prefix
         self.proposal_file = proposal_file
         self.test_mode = test_mode
+        self.min_size = min_size
 
         # join paths if data_root is specified
         if self.data_root is not None:
@@ -68,7 +70,7 @@ class CustomDataset(Dataset):
             self.proposals = None
         # filter images with no annotation during training
         if not test_mode:
-            valid_inds = self._filter_imgs()
+            valid_inds = self._filter_imgs(self.min_size)
             self.img_infos = [self.img_infos[i] for i in valid_inds]
             if self.proposals is not None:
                 self.proposals = [self.proposals[i] for i in valid_inds]

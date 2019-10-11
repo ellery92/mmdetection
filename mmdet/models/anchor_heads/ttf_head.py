@@ -458,7 +458,7 @@ class TTFHead(AnchorHead):
         pred_boxes = torch.cat((self.base_loc - pred_wh[:, [0, 1]],
                                 self.base_loc + pred_wh[:, [2, 3]]), dim=1).permute(0, 2, 3, 1)
         # (batch, h, w, 4)
-        boxes = box_target.permute(0, 2, 3, 1)
+        boxes = box_target.permute(0, 2, 3, 1).float()
         wh_loss = giou_loss(pred_boxes, boxes, mask, avg_factor=avg_factor) * self.wh_weight
 
         return hm_loss, wh_loss

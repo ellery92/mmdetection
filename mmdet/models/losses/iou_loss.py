@@ -68,6 +68,7 @@ def bounded_iou_loss(pred, target, beta=0.2, eps=1e-3):
                        loss_comb - 0.5 * beta)
     return loss
 
+
 def giou_loss(pred,
               target,
               weight,

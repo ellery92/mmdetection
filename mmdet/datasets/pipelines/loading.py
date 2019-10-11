@@ -40,13 +40,15 @@ class LoadAnnotations(object):
                  with_mask=False,
                  with_seg=False,
                  poly2mask=True,
-                 skip_img_without_anno=True):
+                 skip_img_without_anno=True,
+                 with_bbox_ignore=True):
         self.with_bbox = with_bbox
         self.with_label = with_label
         self.with_mask = with_mask
         self.with_seg = with_seg
         self.poly2mask = poly2mask
         self.skip_img_without_anno = skip_img_without_anno
+        self.with_bbox_ignore = with_bbox_ignore
 
     def _load_bboxes(self, results):
         ann_info = results['ann_info']
@@ -58,8 +60,10 @@ class LoadAnnotations(object):
                 'Skip the image "{}" that has no valid gt bbox'.format(
                     file_path))
             return None
-        results['gt_bboxes_ignore'] = ann_info.get('bboxes_ignore', None)
-        results['bbox_fields'].extend(['gt_bboxes', 'gt_bboxes_ignore'])
+        results['bbox_fields'].extend(['gt_bboxes'])
+        if self.with_bbox_ignore:
+            results['gt_bboxes_ignore'] = ann_info.get('bboxes_ignore', None)
+            results['bbox_fields'].extend(['gt_bboxes_ignore'])
         return results
 
     def _load_labels(self, results):

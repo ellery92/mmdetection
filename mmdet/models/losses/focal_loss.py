@@ -42,6 +42,7 @@ def sigmoid_focal_loss(pred,
     loss = weight_reduce_loss(loss, weight, reduction, avg_factor)
     return loss
 
+
 def ct_focal_loss(pred, gt, gamma=2.0):
     """
     Focal loss used in CornerNet & CenterNet. Note that the values in gt (label) are in [0, 1] since
@@ -58,7 +59,7 @@ def ct_focal_loss(pred, gt, gamma=2.0):
     pos_inds = gt.eq(1).float()
     neg_inds = gt.lt(1).float()
 
-    neg_weights = torch.pow(1 - gt, 4)  # reduce punishment
+    neg_weights = torch.pow(1 - gt, 4).float()  # reduce punishment
     pos_loss = -torch.log(pred) * torch.pow(1 - pred, gamma) * pos_inds
     neg_loss = -torch.log(1 - pred) * torch.pow(pred, gamma) * neg_weights * neg_inds
 
