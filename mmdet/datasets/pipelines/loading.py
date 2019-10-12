@@ -41,7 +41,8 @@ class LoadAnnotations(object):
                  with_seg=False,
                  poly2mask=True,
                  skip_img_without_anno=True,
-                 with_bbox_ignore=True):
+                 with_bbox_ignore=True,
+                 with_landmark=False):
         self.with_bbox = with_bbox
         self.with_label = with_label
         self.with_mask = with_mask
@@ -49,6 +50,7 @@ class LoadAnnotations(object):
         self.poly2mask = poly2mask
         self.skip_img_without_anno = skip_img_without_anno
         self.with_bbox_ignore = with_bbox_ignore
+        self.with_landmark = with_landmark
 
     def _load_bboxes(self, results):
         ann_info = results['ann_info']
@@ -100,6 +102,11 @@ class LoadAnnotations(object):
             flag='unchanged').squeeze()
         return results
 
+    def _load_landmarks(self, results):
+        ann_info = results['ann_info']
+        results['gt_landmarks'] = ann_info['landmarks']
+        return results
+
     def __call__(self, results):
         if self.with_bbox:
             results = self._load_bboxes(results)
@@ -111,13 +118,16 @@ class LoadAnnotations(object):
             results = self._load_masks(results)
         if self.with_seg:
             results = self._load_semantic_seg(results)
+        if self.with_landmark:
+            results = self._load_landmarks(results)
         return results
 
     def __repr__(self):
         repr_str = self.__class__.__name__
         repr_str += ('(with_bbox={}, with_label={}, with_mask={},'
-                     ' with_seg={})').format(self.with_bbox, self.with_label,
-                                             self.with_mask, self.with_seg)
+                     ' with_seg={}, with_landmark={})').format(
+                         self.with_bbox, self.with_label, self.with_mask,
+                         self.with_seg, self.with_landmark)
         return repr_str
 
 

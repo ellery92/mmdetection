@@ -149,12 +149,25 @@ class Resize(object):
                 ]
             results[key] = masks
 
+    def _resize_landmarks(self, results):
+        key = "gt_landmarks"
+        if key in results:
+            img_shape = results['img_shape']
+            w_scale = results['scale_factor'][0]
+            h_scale = results['scale_factor'][1]
+            scale_factor = np.array([w_scale, h_scale] * 5, dtype=np.float32)
+            ldms = results[key] * scale_factor
+            ldms[:, 0::2] = np.clip(ldms[:, 0::2], 0, img_shape[1] - 1)
+            ldms[:, 1::2] = np.clip(ldms[:, 1::2], 0, img_shape[0] - 1)
+            results[key] = ldms
+
     def __call__(self, results):
         if 'scale' not in results:
             self._random_scale(results)
         self._resize_img(results)
         self._resize_bboxes(results)
         self._resize_masks(results)
+        self._resize_landmarks(results)
         return results
 
     def __repr__(self):
